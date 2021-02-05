@@ -4,11 +4,20 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "2.45.1"
     }
+    github = {
+      source  = "integrations/github"
+      version = "4.3.0"
+    }
   }
 }
 
 provider "azurerm" {
   features {}
+}
+
+provider "github" {
+  token = var.github_token
+  owner = var.github_owner
 }
 
 locals {
@@ -86,4 +95,28 @@ resource "azurerm_container_registry_webhook" "this" {
   status      = "enabled"
   scope       = "${var.container_name}:latest"
   actions     = ["push"]
+}
+
+resource "github_actions_secret" "acr_username" {
+  repository      = var.github_repository
+  secret_name     = "ACR_USERNAME"
+  plaintext_value = azurerm_container_registry.this.admin_username
+}
+
+resource "github_actions_secret" "acr_password" {
+  repository      = var.github_repository
+  secret_name     = "ACR_PASSWORD"
+  plaintext_value = azurerm_container_registry.this.admin_password
+}
+
+resource "github_actions_secret" "acr_hostname" {
+  repository      = var.github_repository
+  secret_name     = "ACR_HOSTNAME"
+  plaintext_value = azurerm_container_registry.this.login_server
+}
+
+resource "github_actions_secret" "container_name" {
+  repository      = var.github_repository
+  secret_name     = "CONTAINER_NAME"
+  plaintext_value = var.container_name
 }

@@ -27,3 +27,20 @@ variable "container_name" {
   type        = string
   default     = "azure-lab"
 }
+
+variable "github_repository" {
+  description = "The GitHub repository to use"
+  type        = string
+}
+
+variable "github_owner" {
+  description = "The GitHub username to use (Use the following environment variable to inject: TF_VAR_github_owner)"
+  type        = string
+  sensitive   = true
+}
+
+variable "github_token" {
+  description = "The GitHub token to use (Use the following environment variable to inject: TF_VAR_github_token)"
+  type        = string
+  sensitive   = true
+}
